@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esercizi Session Storage</title>
+    <style>
+        .inse {
+            font-size: 40px;
+            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin-top: 20px;
+        }
+
+        input[type="text"], textarea {
+            width: 300px;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        textarea {
+            resize: none; /* Impedisce il ridimensionamento della casella di testo */
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button.rimuovi {
+            background-color: #DC3545;
+        }
+
+        h2 {
+            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="inse"><font>Gestione Nomi e Note</font></div>
+
+    <!-- Sezione Inserimento Nome -->
+    <center>
+        <h2>Inserisci il tuo nome</h2>
+        <input type="text" id="nome" placeholder="Es. Mario Rossi">
+        <br>
+        <button onclick="salvaNome()">Salva Nome</button>
+    </center>
+
+    <!-- Sezione Visualizzazione Nomi -->
+    <h2>Nomi memorizzati:</h2>
+    <ul id="listaNomi"></ul>
+
+    <!-- Sezione Inserimento Nota -->
+    <center>
+        <h2>Inserisci una Nota</h2>
+        <textarea id="nota" placeholder="Scrivi una nota..."></textarea>
+        <br>
+        <button onclick="salvaNota()">Salva Nota</button>
+        <button class="rimuovi" onclick="rimuoviNota()">Rimuovi Nota</button>
+    </center>
+
+    <!-- Sezione Visualizzazione Nota -->
+    <h2>Nota memorizzata:</h2>
+    <p id="notaMemorizzata" style="text-align: center;"></p>
+
+    <script>
+        // Funzione per salvare un nome e aggiungerlo alla lista
+        function salvaNome() {
+            let nome = document.getElementById('nome').value;
+            if (nome) {
+                // Memorizza il nome nel sessionStorage con una chiave incrementale
+                let index = sessionStorage.length + 1;
+                sessionStorage.setItem('nome' + index, nome);
+                visualizzaNomi();  // Chiama la funzione per visualizzare i nomi aggiornati
+            }
+        }
+
+        // Funzione per visualizzare i nomi salvati nel sessionStorage
+        function visualizzaNomi() {
+            let listaNomi = document.getElementById('listaNomi');
+            listaNomi.innerHTML = ''; // Svuota la lista
+            for (let i = 1; i <= sessionStorage.length; i++) {
+                let nome = sessionStorage.getItem('nome' + i);
+                if (nome) {
+                    let li = document.createElement('li');
+                    li.innerHTML = `${nome} <button class="rimuovi" onclick="rimuoviNome(${i})">Rimuovi</button>`;
+                    listaNomi.appendChild(li);
+                }
+            }
+        }
+
+        // Funzione per rimuovere un nome dalla lista e dal sessionStorage
+        function rimuoviNome(index) {
+            sessionStorage.removeItem('nome' + index); // Rimuove il nome specifico
+            visualizzaNomi();  // Aggiorna la lista
+        }
+
+        // Funzione per salvare una nota nel sessionStorage
+        function salvaNota() {
+            let nota = document.getElementById('nota').value;
+            if (nota) {
+                sessionStorage.setItem('nota', nota);  // Salva la nota
+                visualizzaNota();  // Visualizza la nota
+            }
+        }
+
+        // Funzione per visualizzare la nota memorizzata
+        function visualizzaNota() {
+            let notaMemorizzata = sessionStorage.getItem('nota');
+            if (notaMemorizzata) {
+                document.getElementById('notaMemorizzata').textContent = notaMemorizzata;
+            }
+        }
+
+        // Funzione per rimuovere la nota
+        function rimuoviNota() {
+            sessionStorage.removeItem('nota');
+            document.getElementById('notaMemorizzata').textContent = '';
+        }
+
+        // Chiama le funzioni per visualizzare i dati già memorizzati (se ci sono)
+        visualizzaNomi();
+        visualizzaNota();
+    </script>
+</body>
+</html>

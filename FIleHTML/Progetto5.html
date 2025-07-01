@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="it">
+    <head>
+
+    </head>
+
+    <style>
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    }
+
+    select, button {
+        padding: 8px 15px;
+        margin: 10px 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    #listaBrani {
+        list-style: none;
+        padding: 0;
+    }
+
+    #listaBrani li {
+        margin-bottom: 10px;
+        background-color: #fff;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+    }
+
+    #player {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    #branoSuona {
+        display: none;
+    }
+
+    </style>
+    
+    <body>
+        <h1>Gestisci la tua Musica</h1>
+
+        <select id="brano">
+            <option value="">Scegli un brano</option>
+            <option value="canzone1">Canzone 1</option>
+            <option value="canzone2">Canzone 2</option>
+            <option value="canzone3">Canzone 3</option>
+        </select>
+
+        <button id="aggiungi">Aggiungi alla Playlist</button>
+
+        <ul id="listaBrani">
+            </ul>
+
+        <div id="player">
+            <audio id="branoSuona"></audio>
+            <button id="play">Riproduci</button>
+            <button id="pausa">Metti in Pausa</button>
+            <button id="avanti">Avanti &gt;</button>
+            <button id="indietro">&lt; Indietro</button>
+        </div>
+
+        <script>
+
+        const branoSelezione = document.getElementById('brano');
+        const aggiungiButton = document.getElementById('aggiungi');
+        const listaBrani = document.getElementById('listaBrani');
+        const branoSuona = document.getElementById('branoSuona');
+        const playButton = document.getElementById('play');
+        const pausaButton = document.getElementById('pausa');
+        const avantiButton = document.getElementById('avanti');
+        const indietroButton = document.getElementById('indietro');
+
+        let branoInRiproduzione = null;
+        let indiceBranoCorrente = -1;
+        const brani = [];
+
+        aggiungiButton.addEventListener('click', () => {
+            const branoSelezionato = branoSelezione.value;
+            if (branoSelezionato) {
+                const nuovoBrano = document.createElement('li');
+                nuovoBrano.textContent = branoSelezionato;
+                listaBrani.appendChild(nuovoBrano);
+
+                // Aggiungi il brano all'array
+                brani.push(branoSelezionato);
+
+                // Aggiungi evento click per riprodurre il brano
+                nuovoBrano.addEventListener('click', () => {
+                    const indice = brani.indexOf(branoSelezionato);
+                    riproduciBrano(indice);
+                });
+
+                branoSelezione.value = ''; // Reimposta il menu a discesa
+            }
+        });
+
+        playButton.addEventListener('click', () => {
+            if (branoInRiproduzione) {
+                branoInRiproduzione.play();
+                aggiornaPulsanti();
+            }
+        });
+
+        pausaButton.addEventListener('click', () => {
+            if (branoInRiproduzione) {
+                branoInRiproduzione.pause();
+                aggiornaPulsanti();
+            }
+        });
+
+        avantiButton.addEventListener('click', () => {
+            if (indiceBranoCorrente < brani.length - 1) {
+                riproduciBrano(indiceBranoCorrente + 1);
+            }
+        });
+
+        indietroButton.addEventListener('click', () => {
+            if (indiceBranoCorrente > 0) {
+                riproduciBrano(indiceBranoCorrente - 1);
+            }
+        });
+
+        function riproduciBrano(indice) {
+            if (branoInRiproduzione) {
+                branoInRiproduzione.pause();
+            }
+            indiceBranoCorrente = indice;
+            const branoSelezionato = brani[indice];
+            branoInRiproduzione = new Audio(`audio/${branoSelezionato}.mp3`); // Sostituisci "audio/" con il percorso dei tuoi file audio
+            branoInRiproduzione.play();
+            aggiornaPulsanti();
+        }
+
+        function aggiornaPulsanti() {
+            if (branoInRiproduzione && !branoInRiproduzione.paused) {
+                playButton.disabled = true;
+                pausaButton.disabled = false;
+            } else {
+                playButton.disabled = false;
+                pausaButton.disabled = true;
+            }
+
+            avantiButton.disabled = indiceBranoCorrente >= brani.length - 1;
+            indietroButton.disabled = indiceBranoCorrente <= 0;
+        }
+
+        </script>
+    </body>
+</html>

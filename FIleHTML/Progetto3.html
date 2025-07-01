@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Convertitore di lunghezza">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convertitore di lunghezza</title>
+</head>
+
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        border: none;
+        outline: none;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+
+    html , body {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #111;
+        color: #eee;
+    }
+
+    .wrapper{
+        padding: 20px;
+        max-width: 400px;
+        background-color: #000;
+        border-radius: 10px;
+    }
+
+    .converter{
+        margin-top: 10px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .converter span{
+        width: 30px;
+        height: 30px;
+        background: url(./convert_arrow.svg) no-repeat center;
+        margin: 0 10px;
+    }
+
+    input , select {
+        width: 100%;
+        height: 40px;
+        border-radius: 5px;
+        padding: 0 10px;
+        background-color: #111;
+        color: #eee;
+        text-align: center;
+        font-size: 16px;
+    }
+
+    input {
+        margin-bottom: 10px;
+    }
+
+    select{
+        cursor: pointer;
+    }
+</style>
+
+<body>
+    <div class="wrapper">
+        <h1>Convertitore di lunghezza</h1>
+        <div class="converter">
+            <div class="input">
+                <input type="text" placeholder="Input" id="input">
+                <select id="inputType">
+                    <option value="km">Chilometri</option>
+                    <option value="hm">Ettometri</option>
+                    <option value="dam">Decametri</option>
+                    <option value="m">Metri</option>
+                    <option value="dm">Decimetri</option>
+                    <option value="cm">Centimetri</option>
+                    <option value="mm">Millimetri</option>
+                </select>
+            </div>
+            <span></span>
+            <div class="result">
+                <input type="text" placeholder="Result" id="result">
+                <select id="resultType">
+                    <option value="km">Chilometri</option>
+                    <option value="hm">Ettometri</option>
+                    <option value="dam">Decametri</option>
+                    <option value="m">Metri</option>
+                    <option value="dm">Decimetri</option>
+                    <option value="cm">Centimetri</option>
+                    <option value="mm">Millimetri</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var input = document.getElementById('input'),
+            result = document.getElementById('result'),
+            inputType = document.getElementById('inputType'),
+            resultType = document.getElementById('resultType');
+
+        input.addEventListener('input', myResult);
+        inputType.addEventListener('change', myResult);
+        resultType.addEventListener('change', myResult);
+
+        function myResult() {
+            var inputTypeValue = inputType.value,
+                resultTypeValue = resultType.value,
+                inputValue = parseFloat(input.value);
+
+            // Conversion logic
+            var conversions = {
+                km: {
+                    hm: inputValue * 10,
+                    dam: inputValue * 100,
+                    m: inputValue * 1000,
+                    dm: inputValue * 10000,
+                    cm: inputValue * 100000,
+                    mm: inputValue * 1000000,
+                    km: inputValue
+                },
+                hm: {
+                    km: inputValue / 10,
+                    dam: inputValue * 10,
+                    m: inputValue * 100,
+                    dm: inputValue * 1000,
+                    cm: inputValue * 10000,
+                    mm: inputValue * 100000,
+                    hm: inputValue
+                },
+                dam: {
+                    km: inputValue / 100,
+                    hm: inputValue / 10,
+                    m: inputValue * 10,
+                    dm: inputValue * 100,
+                    cm: inputValue * 1000,
+                    mm: inputValue * 10000,
+                    dam: inputValue
+                },
+                m: {
+                    km: inputValue / 1000,
+                    hm: inputValue / 100,
+                    dam: inputValue / 10,
+                    dm: inputValue * 10,
+                    cm: inputValue * 100,
+                    mm: inputValue * 1000,
+                    m: inputValue
+                },
+                dm: {
+                    km: inputValue / 10000,
+                    hm: inputValue / 1000,
+                    dam: inputValue / 100,
+                    m: inputValue / 10,
+                    cm: inputValue * 10,
+                    mm: inputValue * 100,
+                    dm: inputValue
+                },
+                cm: {
+                    km: inputValue / 100000,
+                    hm: inputValue / 10000,
+                    dam: inputValue / 1000,
+                    m: inputValue / 100,
+                    dm: inputValue / 10,
+                    mm: inputValue * 10,
+                    cm: inputValue
+                },
+                mm: {
+                    km: inputValue / 1000000,
+                    hm: inputValue / 100000,
+                    dam: inputValue / 10000,
+                    m: inputValue / 1000,
+                    dm: inputValue / 100,
+                    cm: inputValue / 10,
+                    mm: inputValue
+                }
+            };
+
+            result.value = conversions[inputTypeValue][resultTypeValue];
+        }
+    </script>
+</body>
+
+</html>

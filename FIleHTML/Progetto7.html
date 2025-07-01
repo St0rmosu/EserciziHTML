@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esercizi Session Storage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        
+        input[type="text"], textarea {
+            width: 300px;
+            padding: 10px;
+            margin: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 50%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Gestione Nomi e Note con Session Storage</h1>
+
+    <!-- Input per Nome e Nota -->
+    <input type="text" id="nome" placeholder="Inserisci il tuo nome">
+    <br>
+    <button onclick="salvaNome()">Salva Nome</button>
+    <button onclick="visualizzaNomi()">Visualizza Nomi</button>
+    <button onclick="eliminaNome()">Elimina Nome</button>
+
+    <h2>Nomi Salvati</h2>
+    <ul id="listaNomi"></ul>
+
+    <h2>Gestione Note</h2>
+    <textarea id="nota" rows="4" placeholder="Inserisci la tua nota qui"></textarea>
+    <br>
+    <button onclick="salvaNota()">Salva Nota</button>
+    <button onclick="visualizzaNote()">Visualizza Note</button>
+    <button onclick="eliminaNote()">Elimina Tutte le Note</button>
+
+    <h2>Note Salvate</h2>
+    <ul id="listaNote"></ul>
+
+    <script>
+        // Funzione per salvare un nome nel sessionStorage
+        function salvaNome() {
+            let nome = document.getElementById('nome').value;
+            if (nome) {
+                sessionStorage.setItem("nome_" + sessionStorage.length, nome);
+                alert("Nome salvato con successo!");
+                visualizzaNomi();
+            }
+        }
+
+        // Funzione per visualizzare tutti i nomi salvati nel sessionStorage
+        function visualizzaNomi() {
+            let listaNomi = document.getElementById('listaNomi');
+            listaNomi.innerHTML = ""; // Pulisce la lista
+
+            for (let i = 0; i < sessionStorage.length; i++) {
+                let key = sessionStorage.key(i);
+                if (key.startsWith("nome_")) {
+                    let nome = sessionStorage.getItem(key);
+                    let li = document.createElement('li');
+                    li.innerText = nome;
+                    li.appendChild(creaPulsanteElimina(key, visualizzaNomi));
+                    listaNomi.appendChild(li);
+                }
+            }
+        }
+
+        // Funzione per eliminare un nome specifico dal sessionStorage
+        function eliminaNome() {
+            let nome = document.getElementById('nome').value;
+            for (let i = 0; i < sessionStorage.length; i++) {
+                let key = sessionStorage.key(i);
+                if (sessionStorage.getItem(key) === nome) {
+                    sessionStorage.removeItem(key);
+                    alert("Nome eliminato con successo!");
+                    visualizzaNomi();
+                    break;
+                }
+            }
+        }
+
+        // Funzione per salvare una nota nel sessionStorage
+        function salvaNota() {
+            let nota = document.getElementById('nota').value;
+            if (nota) {
+                sessionStorage.setItem("nota_" + sessionStorage.length, nota);
+                alert("Nota salvata con successo!");
+                visualizzaNote();
+            }
+        }
+
+        // Funzione per visualizzare tutte le note salvate nel sessionStorage
+        function visualizzaNote() {
+            let listaNote = document.getElementById('listaNote');
+            listaNote.innerHTML = ""; // Pulisce la lista
+
+            for (let i = 0; i < sessionStorage.length; i++) {
+                let key = sessionStorage.key(i);
+                if (key.startsWith("nota_")) {
+                    let nota = sessionStorage.getItem(key);
+                    let li = document.createElement('li');
+                    li.innerText = nota;
+                    li.appendChild(creaPulsanteElimina(key, visualizzaNote));
+                    listaNote.appendChild(li);
+                }
+            }
+        }
+
+        // Funzione per eliminare tutte le note salvate
+        function eliminaNote() {
+            let chiaviDaRimuovere = [];
+            for (let i = 0; i < sessionStorage.length; i++) {
+                let key = sessionStorage.key(i);
+                if (key.startsWith("nota_")) {
+                    chiaviDaRimuovere.push(key);
+                }
+            }
+            chiaviDaRimuovere.forEach(chiave => sessionStorage.removeItem(chiave));
+            alert("Tutte le note sono state eliminate!");
+            visualizzaNote();
+        }
+
+        // Funzione per creare un pulsante di eliminazione per elementi della lista
+        function creaPulsanteElimina(chiave, callback) {
+            let button = document.createElement("button");
+            button.innerText = "Elimina";
+            button.onclick = function () {
+                sessionStorage.removeItem(chiave);
+                callback();
+            };
+            return button;
+        }
+
+        // Visualizza i nomi e le note salvati al caricamento della pagina
+        visualizzaNomi();
+        visualizzaNote();
+    </script>
+</body>
+</html>

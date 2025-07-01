@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verifica Javascript</title>
+    <style>
+        .Salvanomi {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            font-size: 34px;
+            margin-bottom: 30px;
+            margin-top: 100px;
+            color: #333;
+        }
+
+        input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100px;
+            padding: 5px;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #005f7f;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 500px;
+            margin: auto;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        h2 {
+            font-size: 24px;
+            color: #333;
+            border-bottom: 2px solid #008CBA;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+
+        h3 {
+            font-size: 20px;
+            color: #555;
+        }
+
+        ul {
+            list-style-type: none; /* Rimuove i punti dall'elenco */
+            padding: 0; /* Rimuove il padding predefinito */
+        }
+
+        ul li {
+            padding: 8px; /* Padding per ogni elemento della lista */
+            margin: 5px 0; /* Margine verticale tra gli elementi */
+            border: 1px solid #ccc; /* Bordo grigio per ogni elemento */
+            border-radius: 5px; /* Angoli arrotondati */
+            display: flex; /* Usa il layout flex per allineare i contenuti */
+            justify-content: space-between; /* Spazia gli elementi */
+            align-items: center; /* Allinea verticalmente gli elementi */
+        }
+
+        #saluto {
+            margin-top: 10px; /* Margine sopra il saluto */
+            color: #008CBA; /* Colore del testo del saluto */
+            font-weight: bold; /* Grassetto per il saluto */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Esercizio 1: Salva Nome</h2>
+        <input type="text" id="nome" placeholder="Inserisci il tuo nome">
+        <button onclick="salvaNome()">Salva Nome</button> <!-- Pulsante per salvare il nome -->
+        <h3 id="saluto"></h3> <!-- Area per visualizzare il saluto -->
+
+        <h2>Esercizio 2: Salva Più Nomi</h2>
+        <input type="text" id="nomeMultiplo" placeholder="Inserisci un nome">
+        <button onclick="aggiungiNome()">Aggiungi Nome</button> <!-- Pulsante per aggiungere un nome -->
+        <ul id="listaNomi"></ul> <!-- Lista dei nomi salvati -->
+
+        <h2>Esercizio 3: Lista Studenti</h2>
+        <ul id="listaStudenti">
+            <li>Mario <button onclick="salvaNomeLista('Mario')">Salva</button></li>
+            <li>Luigi <button onclick="salvaNomeLista('Luigi')">Salva</button></li>
+            <li>Sara <button onclick="salvaNomeLista('Sara')">Salva</button></li>
+        </ul>
+
+        <h2>Esercizio 4: Elimina Nomi Salvati</h2>
+        <h3>Nomi Salvati:</h3>
+        <ul id="listaElimina"></ul> <!-- Lista dei nomi da eliminare -->
+
+        <h2>Esercizio 5: Gestione Note</h2>
+        <input type="text" id="nota" placeholder="Scrivi una nota">
+        <button onclick="aggiungiNota()">Aggiungi Nota</button> <!-- Pulsante per aggiungere una nota -->
+        <ul id="listaNote"></ul> <!-- Lista delle note salvate -->
+    </div>
+
+    <script>
+        // Esercizio 1: Funzione per salvare il nome dell'utente
+        function salvaNome() {
+            var nome = document.getElementById("nome").value; // Ottiene il valore dell'input
+            sessionStorage.setItem("nomeUtente", nome); // Salva il nome nel sessionStorage
+            document.getElementById("saluto").innerHTML = "Ciao, " + nome + "!"; // Mostra un saluto
+        }
+
+        // Esercizio 2: Funzione per aggiungere nomi a una lista
+        function aggiungiNome() {
+            var nome = document.getElementById("nomeMultiplo").value; // Ottiene il valore dell'input
+            var nomi = sessionStorage.getItem("nomiMultipli"); // Recupera i nomi salvati
+            if (!nomi) {
+                nomi = nome; // Se non ci sono nomi, inizia con il nome corrente
+            } else {
+                nomi += "," + nome; // Altrimenti, aggiungi il nuovo nome alla lista
+            }
+            sessionStorage.setItem("nomiMultipli", nomi); // Salva la lista aggiornata
+            visualizzaNomi(); // Aggiorna la visualizzazione della lista
+        }
+
+        // Funzione per visualizzare i nomi salvati
+        function visualizzaNomi() {
+            var nomi = sessionStorage.getItem("nomiMultipli") || ""; // Ottiene i nomi salvati o una stringa vuota
+            var lista = document.getElementById("listaNomi"); // Ottiene l'elemento della lista
+            lista.innerHTML = ""; // Pulisce la lista
+            var nome = ""; // Variabile per costruire il nome
+            for (var i = 0; i <= nomi.length; i++) { // Ciclo per ogni carattere nella stringa dei nomi
+                if (nomi[i] !== "," && i < nomi.length) { // Se il carattere non è una virgola
+                    nome += nomi[i]; // Aggiungi il carattere al nome
+                } else {
+                    if (nome) {
+                        lista.innerHTML += "<li>" + nome + "</li>"; // Aggiungi il nome alla lista
+                    }
+                    nome = ""; // Reset nome
+                }
+            }
+        }
+
+        // Esercizio 3: Funzione per salvare i nomi degli studenti
+        function salvaNomeLista(nome) {
+            var nomiSalvati = sessionStorage.getItem("listaStudenti"); // Recupera i nomi salvati
+            if (!nomiSalvati) {
+                nomiSalvati = nome; // Se non ci sono nomi, inizia con il nome corrente
+            } else {
+                nomiSalvati += "," + nome; // Altrimenti, aggiungi il nuovo nome
+            }
+            sessionStorage.setItem("listaStudenti", nomiSalvati); // Salva la lista aggiornata
+            visualizzaNomiElimina(); // Aggiorna la visualizzazione dei nomi da eliminare
+        }
+
+        // Esercizio 4: Funzione per visualizzare i nomi salvati
+        function visualizzaNomiElimina() {
+            var nomi = sessionStorage.getItem("listaStudenti") || ""; // Ottiene i nomi salvati
+            var lista = document.getElementById("listaElimina"); // Ottiene l'elemento della lista
+            lista.innerHTML = ""; // Pulisce la lista
+            var nome = ""; // Variabile per costruire il nome
+            for (var i = 0; i <= nomi.length; i++) { // Ciclo per ogni carattere
+                if (nomi[i] !== "," && i < nomi.length) { // Se il carattere non è una virgola
+                    nome += nomi[i]; // Aggiungi il carattere al nome
+                } else {
+                    if (nome) {
+                        // Aggiungi il nome alla lista con un pulsante per rimuoverlo
+                        lista.innerHTML += "<li>" + nome + 
+                            " <button onclick='rimuoviNome(\"" + nome + "\")'>Rimuovi</button></li>";
+                    }
+                    nome = ""; // Reset nome
+                }
+            }
+        }
+
+        // Funzione per rimuovere un nome dalla lista
+        function rimuoviNome(nome) {
+            var nomi = sessionStorage.getItem("listaStudenti"); // Recupera i nomi salvati
+            if (!nomi) return; // Se non ci sono nomi, esci
+
+            var nuovaLista = ""; // Variabile per la nuova lista di nomi
+            var nomeAttuale = ""; // Variabile per costruire il nome attuale
+            for (var i = 0; i <= nomi.length; i++) { // Ciclo per ogni carattere
+                if (nomi[i] !== "," && i < nomi.length) { // Se il carattere non è una virgola
+                    nomeAttuale += nomi[i]; // Aggiungi il carattere al nome attuale
+                } else {
+                    if (nomeAttuale !== nome && nomeAttuale) {
+                        // Aggiungi il nome attuale alla nuova lista solo se non è quello da rimuovere
+                        if (nuovaLista) {
+                            nuovaLista += ",";
+                        }
+                        nuovaLista += nomeAttuale; // Aggiungi il nome attuale
+                    }
+                    nomeAttuale = ""; // Reset nome attuale
+                }
+            }
+            sessionStorage.setItem("listaStudenti", nuovaLista); // Salva la nuova lista senza il nome rimosso
+            visualizzaNomiElimina(); // Aggiorna la visualizzazione dei nomi da eliminare
+        }
+
+        // Esercizio 5: Funzione per aggiungere note
+        function aggiungiNota() {
+            var nota = document.getElementById("nota").value; // Ottiene il valore dell'input per la nota
+            var note = sessionStorage.getItem("note"); // Recupera le note salvate
+            if (!note) {
+                note = nota; // Se non ci sono note, inizia con la nota corrente
+            } else {
+                note += "," + nota; // Altrimenti, aggiungi la nuova nota alla lista
+            }
+            sessionStorage.setItem("note", note); // Salva la lista aggiornata
+            visualizzaNote(); // Aggiorna la visualizzazione delle note
+        }
+
+        // Funzione per visualizzare le note salvate
+        function visualizzaNote() {
+            var note = sessionStorage.getItem("note") || ""; // Ottiene le note salvate o una stringa vuota
+            var lista = document.getElementById("listaNote"); // Ottiene l'elemento della lista
+            lista.innerHTML = ""; // Pulisce la lista
+            var notaAttuale = ""; // Variabile per costruire la nota
+            for (var i = 0; i <= note.length; i++) { // Ciclo per ogni carattere
+                if (note[i] !== "," && i < note.length) { // Se il carattere non è una virgola
+                    notaAttuale += note[i]; // Aggiungi il carattere alla nota attuale
+                } else {
+                    if (notaAttuale) {
+                        // Aggiungi la nota alla lista con pulsante per modificarla e eliminarla
+                        lista.innerHTML += "<li>" + notaAttuale + 
+                            " <button onclick='modificaNota(\"" + notaAttuale + "\")'>Modifica</button> " + 
+                            "<button onclick='eliminaNota(\"" + notaAttuale + "\")'>Elimina</button></li>";
+                    }
+                    notaAttuale = ""; // Reset nota attuale
+                }
+            }
+        }
+
+        // Funzione per eliminare una nota dalla lista
+        function eliminaNota(notaDaEliminare) {
+            var note = sessionStorage.getItem("note"); // Recupera le note salvate
+            if (!note) return; // Se non ci sono note, esci
+
+            var nuovaLista = ""; // Variabile per la nuova lista di note
+            var notaAttuale = ""; // Variabile per costruire la nota attuale
+            for (var i = 0; i <= note.length; i++) { // Ciclo per ogni carattere
+                if (note[i] !== "," && i < note.length) { // Se il carattere non è una virgola
+                    notaAttuale += note[i]; // Aggiungi il carattere alla nota attuale
+                } else {
+                    if (notaAttuale !== notaDaEliminare && notaAttuale) {
+                        // Aggiungi la nota attuale alla nuova lista solo se non è quella da eliminare
+                        if (nuovaLista) {
+                            nuovaLista += ","; // Aggiunge la virgola se non è la prima nota
+                        }
+                        nuovaLista += notaAttuale; // Aggiungi la nota attuale
+                    }
+                    notaAttuale = ""; // Reset nota attuale
+                }
+            }
+            sessionStorage.setItem("note", nuovaLista); // Salva la nuova lista senza la nota eliminata
+            visualizzaNote(); // Aggiorna la visualizzazione delle note
+        }
+
+        // Funzione per modificare una nota
+        function modificaNota(notaDaModificare) {
+            var nuovaNota = prompt("Modifica la nota:", notaDaModificare); // Chiede all'utente di modificare la nota
+            if (nuovaNota) { // Se l'utente inserisce una nuova nota
+                eliminaNota(notaDaModificare); // Rimuovi la nota originale
+                aggiungiNotaDaModifica(nuovaNota); // Aggiungi la nuova nota
+            }
+        }
+
+        // Funzione per aggiungere una nota da modifica
+        function aggiungiNotaDaModifica(nuovaNota) {
+            var note = sessionStorage.getItem("note"); // Recupera le note salvate
+            if (!note) {
+                note = nuovaNota; // Se non ci sono note, inizia con la nuova nota
+            } else {
+                note += "," + nuovaNota; // Altrimenti, aggiungi la nuova nota alla lista
+            }
+            sessionStorage.setItem("note", note); // Salva la lista aggiornata
+            visualizzaNote(); // Aggiorna la visualizzazione delle note
+        }
+
+        // Inizializza le visualizzazioni all'apertura della pagina
+        visualizzaNomi(); // Mostra i nomi salvati
+        visualizzaNomiElimina(); // Mostra i nomi salvati da eliminare
+        visualizzaNote(); // Mostra le note salvate
+    </script>
+</body>
+</html>

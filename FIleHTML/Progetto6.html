@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Lorenzify</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #07f;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: rgb(8, 42, 82);
+            font-family: 'Barlow', sans-serif;
+            position: absolute;
+            top: 15%;
+            height: calc(100% - 15%);
+        }
+
+        .UI {
+            width: 300px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #fff;
+            border-radius: 10px;
+            background: #fff;
+            box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
+        }
+
+        select,
+        button,
+        ul {
+            margin: 10px 0;
+            width: 100%;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+            cursor: pointer; /* Cambia il cursore quando si passa sopra un elemento della playlist */
+        }
+
+        .controls button {
+            margin: 5px;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: #07f;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        .brano {
+            width: 100%;
+            height: 155px;
+            width: 10px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <h1>Lorenzify</h1>
+    <div class="UI">
+        <select id="brano">
+            <option value="the_code">The Code - Nemo</option>
+            <option value="europapa">Europapa - Joost Klein</option>
+            <option value="la_noia">La noia - Angelina Mango</option>
+            <option value="hurricane">Hurricane - Eden Golan</option>
+            <option value="mon_amour">Mon amour - Slimane</option>
+            <option value="doomsday_blue">Doomsday Blue - Bambie Thug</option>
+            <option value="fighter">Fighter - Tali</option>
+            <option value="no_rules">No Rules! - Windows95man</option>
+            <option value="pedestal">Pedestal - Aiko</option>
+            <option value="ulveham">Ulveham - Gåte</option>
+        </select>
+
+        <button id="aggiungi">Aggiungi</button>
+
+        <ul id="listaBrani"></ul>
+
+        <div class="controls">
+            <button id="play">Play</button>
+            <button id="pausa">Pausa</button>
+            <button id="avanti">Avanti</button>
+            <button id="indietro">Indietro</button>
+        </div>
+    </div>
+
+    <div id="coverContainer">
+        <img id="cover" src="" alt="Cover image">
+    </div>
+
+    <script>
+        const branoSelezione = document.getElementById('brano');
+        const aggiungiButton = document.getElementById('aggiungi');
+        const listaBrani = document.getElementById('listaBrani');
+        const playButton = document.getElementById('play');
+        const pausaButton = document.getElementById('pausa');
+        const avantiButton = document.getElementById('avanti');
+        const indietroButton = document.getElementById('indietro');
+        const coverImage = document.getElementById('cover');
+
+        let branoInRiproduzione = null;
+        let indiceBranoAttuale = 0;
+
+
+        aggiungiButton.addEventListener('click', () => {
+            const branoSelezionato = branoSelezione.value;
+            const branoText = branoSelezione.options[branoSelezione.selectedIndex].text;
+            if (branoSelezionato) {
+                const nuovoBrano = document.createElement('li');
+                nuovoBrano.textContent = branoText;
+                listaBrani.appendChild(nuovoBrano);
+
+                // Aggiungi evento click per riprodurre il brano
+                nuovoBrano.addEventListener('click', () => {
+                    if (branoInRiproduzione) {
+                        branoInRiproduzione.pause();
+                    }
+                    branoInRiproduzione = new Audio(`audio/${branoSelezionato}.mp3`);
+                    branoInRiproduzione.play();
+                    coverImage.src = covers[branoSelezionato];
+                    coverImage.alt = `Cover image of ${branoText}`;
+                    aggiornaPulsanti();
+                });
+
+                branoSelezione.value = ''; // Reimposta il menu a discesa
+            }
+        });
+
+        playButton.addEventListener('click', () => {
+            if (branoInRiproduzione) {
+                branoInRiproduzione.play();
+                aggiornaPulsanti();
+                coverImage.classList.add('rotate'); // Aggiungi la classe di rotazione all'immagine
+                if (coverImage && branoInRiproduzione.src) {
+                    coverImage.src = covers[branoSelezione.value];
+                    coverImage.alt = `Cover image of ${branoSelezione.options[branoSelezione.selectedIndex].text}`;
+                }
+            }
+        });
+
+        pausaButton.addEventListener('click', () => {
+            if (branoInRiproduzione) {
+                branoInRiproduzione.pause();
+                coverImage.classList.remove('rotate'); // Rimuovi la classe di rotazione dall'immagine
+                aggiornaPulsanti();
+            }
+        });
+
+        avantiButton.addEventListener('click', () => {
+            if (branoInRiproduzione) {
+                branoInRiproduzione.pause();
+                indiceBranoAttuale = (indiceBranoAttuale + 1) % Object.keys(covers).length;
+                const prossimoBrano = Object.keys(covers)[indiceBranoAttuale];
+                branoInRiproduzione = new Audio(`audio/${prossimoBrano}.mp3`);
+                branoInRiproduzione.play();
+                coverImage.src = covers[prossimoBrano];
+                coverImage.alt = `Cover image of ${branoSelezione.options[branoSelezione.selectedIndex].text}`;
+                aggiornaPulsanti();
+            }
+        });
+
+        indietroButton.addEventListener('click', () => {
+            if (branoInRiproduzione) {
+                branoInRiproduzione.pause();
+                indiceBranoAttuale = (indiceBranoAttuale - 1 + Object.keys(covers).length) % Object.keys(covers).length;
+                const branoPrecedente = Object.keys(covers)[indiceBranoAttuale];
+                branoInRiproduzione = new Audio(`audio/${branoPrecedente}.mp3`);
+                branoInRiproduzione.play();
+                coverImage.src = covers[branoPrecedente];
+                coverImage.alt = `Cover image of ${branoSelezione.options[branoSelezione.selectedIndex].text}`;
+                aggiornaPulsanti();
+            }
+        });
+
+        function aggiornaPulsanti() {
+            if (branoInRiproduzione && branoInRiproduzione.paused) {
+                playButton.disabled = false;
+                pausaButton.disabled = true;
+            } else {
+                playButton.disabled = true;
+                pausaButton.disabled = false;
+            }
+        }
+    </script>
+</body>
+
+</html>
+

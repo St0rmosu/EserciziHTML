@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esercizio3 - LocalStorage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        input[type="text"] {
+            width: 200px;
+            padding: 10px;
+            margin: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button.elimina {
+            background-color: #DC3545;
+        }
+
+        table {
+            width: 50%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Gestione Nomi e Cognomi con LocalStorage</h1>
+
+    <!-- Input per Nome e Cognome -->
+    <input type="text" id="nome" placeholder="Nome">
+    <input type="text" id="cognome" placeholder="Cognome">
+    <br>
+    <button onclick="salvaDati()">Salva</button>
+
+    <!-- Tabella che verrà popolata -->
+    <h2>Nomi salvati:</h2>
+    <table id="tabella">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Cognome</th>
+                <th>Elimina</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Righe dinamiche qui -->
+        </tbody>
+    </table>
+
+    <script>
+        // Funzione per salvare nome e cognome nel localStorage
+        function salvaDati() {
+            let nome = document.getElementById('nome').value;
+            let cognome = document.getElementById('cognome').value;
+
+            if (nome && cognome) {
+                // Salva in localStorage come stringa concatenata
+                localStorage.setItem(nome, cognome);
+                alert("Dati salvati con successo!");
+                aggiungiAllaTabella(nome, cognome);
+            }
+        }
+
+        // Funzione per popolare la tabella all'avvio
+        function popolaTabella() {
+            let tbody = document.querySelector("#tabella tbody");
+            tbody.innerHTML = ''; // Pulisce la tabella
+
+            for (let i = 0; i < localStorage.length; i++) {
+                let nome = localStorage.key(i);
+                let cognome = localStorage.getItem(nome);
+                aggiungiAllaTabella(nome, cognome);
+            }
+        }
+
+        // Funzione per aggiungere una riga alla tabella
+        function aggiungiAllaTabella(nome, cognome) {
+            let tbody = document.querySelector("#tabella tbody");
+
+            let row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${nome}</td>
+                <td>${cognome}</td>
+                <td><button class="elimina" onclick="eliminaDati('${nome}')">Elimina</button></td>
+            `;
+
+            tbody.appendChild(row);
+        }
+
+        // Funzione per eliminare dati da localStorage e rimuovere la riga dalla tabella
+        function eliminaDati(nome) {
+            if (confirm(`Sei sicuro di voler eliminare ${nome}?`)) {
+                localStorage.removeItem(nome);
+                popolaTabella(); // Aggiorna la tabella dopo l'eliminazione
+            }
+        }
+
+        // Popola la tabella al caricamento della pagina
+        popolaTabella();
+    </script>
+</body>
+</html>

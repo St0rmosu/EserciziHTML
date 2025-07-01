@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Province e Città</title>
+    <style>
+        body {
+            font-family: "Roboto", sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #0757f7;
+            min-height: 100vh;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-family: "roboto", sans-serif;
+            font-size: 30px;
+        }
+
+        label {
+            margin-right: 10px;
+            display: flex;
+            font-family: "Roboto", sans-serif;
+            font-size: 25px;
+            color: white;
+            
+        }
+
+        select {
+            padding: 8px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Province e Città</h1>
+    <label for="countrySelect">Paese:</label>
+    <select id="countrySelect" onchange="populateCities()">
+        <option value="">Seleziona un paese</option>
+        <option value="italy">Italia</option>
+        <option value="france">Francia</option>
+        <option value="germany">Germania</option>
+    </select>
+
+    <label for="citySelect">Città:</label>
+    <select id="citySelect">
+        <option value="">Seleziona un paese prima</option>
+    </select>
+
+    <script>
+        // Definiamo un oggetto che contiene una mappa di città per ogni paese
+        var citiesByCountry = {
+            italy: ["Roma", "Milano", "Napoli", "Torino"],
+            france: ["Parigi", "Marsiglia", "Lione", "Nizza"],
+            germany: ["Berlino", "Amburgo", "Monaco", "Francoforte"]
+        };
+
+        // Funzione per popolare la casella delle città in base al paese selezionato
+        function populateCities() {
+            var countrySelect = document.getElementById("countrySelect");
+            var citySelect = document.getElementById("citySelect");
+            var selectedCountry = countrySelect.value;
+            citySelect.innerHTML = ""; // Pulisce le opzioni precedenti
+
+            if (selectedCountry) {
+                var cities = citiesByCountry[selectedCountry];
+                cities.forEach(function(city) {
+                    var option = document.createElement("option");
+                    option.text = city;
+                    option.value = city;
+                    citySelect.add(option);
+                });
+            } else {
+                var option = document.createElement("option");
+                option.text = "Seleziona un paese prima";
+                citySelect.add(option);
+            }
+        }
+    </script>
+</body>
+
+</html>
